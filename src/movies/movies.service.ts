@@ -43,8 +43,11 @@ export class MoviesService {
   async findOne(id: string): Promise<Movie> {
     return this.movieModel.findOne({ _id: id }).exec();
   }
+  async findOneIdMovie(id: number): Promise<Movie> {
+    return this.movieModel.findOne({ id_movie: id }).exec();
+  }
 
   async remove(id: string) {
-    return this.movieModel.findByIdAndDelete({ _id: id }).exec();
+    return this.movieModel.findOneAndDelete({ id_movie: Number(id) }).exec();
   }
 }
