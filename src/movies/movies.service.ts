@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { UpdateMovieDto } from './dto/update-movie.dto';
 import { HttpService } from '@nestjs/axios';
 import { Request } from 'express'; 
+import { Movie, MovieDocument } from './schemas/movie.schemas';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class MoviesService {
   private readonly apiKey = process.env.TMDB_API_KEY
   private readonly apiUrl = 'https://api.themoviedb.org/3';
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    @InjectModel(Movie.name) private readonly movieModel: Model<MovieDocument>,
+    private readonly httpService: HttpService) {}
 
   async getPopularMovies(page: number) {
     let url_ = `${this.apiUrl}/movie/popular?api_key=${this.apiKey}&page=${page}`
@@ -25,23 +29,22 @@ export class MoviesService {
     return response.data;
   }
 
-  create(createMovieDto: CreateMovieDto) {
-    return 'This action adds a new movie';
+  async create(createMovieDto: CreateMovieDto): Promise<Movie> {
+    return this.movieModel.create(createMovieDto);
   }
 
-  findAll() {
-    return `This action returns all movies`;
+  async findAll(request: Request): Promise<Movie[]> {
+    return this.movieModel
+      .find(request.query)
+      .setOptions({ sanitizeFilter: true })
+      .exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} movie`;
+  async findOne(id: string): Promise<Movie> {
+    return this.movieModel.findOne({ _id: id }).exec();
   }
 
-  update(id: number, updateMovieDto: UpdateMovieDto) {
-    return `This action updates a #${id} movie`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} movie`;
+  async remove(id: string) {
+    return this.movieModel.findByIdAndDelete({ _id: id }).exec();
   }
 }
