@@ -18,8 +18,8 @@ export class MoviesService {
   async getPopularMovies(page: number) {
     let url_ = `${this.apiUrl}/movie/popular?api_key=${this.apiKey}&page=${page}`
     const response = await this.httpService.get(url_).toPromise();
-    console.log(response)
-    return response;
+    console.log(response.data)
+    return response.data;
   }
 
   async getMoviesDetails(id: number) {
