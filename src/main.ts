@@ -7,7 +7,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
    // Configuración de CORS
    app.enableCors({
-    origin: '*',
+    origin: ['*','http://localhost:3000','https://front-app-movie-quickbetdmovies.vercel.app','https://front-app-movie-quickbetdmovies-bei9ljneo.vercel.app'],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Habilita las cookies y credenciales si es necesario
   });
